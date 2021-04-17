@@ -3,4 +3,7 @@
 O="$1"
 PKG="$2"
 
-docker run -i --rm -v $PWD:/g gbuilder /g/build.sh "$PKG" "-g -O$O -fcf-protection=none -fno-eliminate-unused-debug-types" /g/out-$O
+VOLPATH=/var/cache/binpkgs
+
+mkdir -p $PWD/out-$O
+docker run -i --rm -v $PWD/out-$O:$VOLPATH -v $PWD/build.sh:/build.sh gbuilder /build.sh "$PKG" "-g -O$O -fcf-protection=none -fno-eliminate-unused-debug-types" $VOLPATH

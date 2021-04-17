@@ -1,2 +1,3 @@
 FROM gentoo/stage3:amd64
-run emerge --sync && emerge eix && eix-update
+run emerge --sync
+run emerge --update --deep --with-bdeps=y --newuse @world
