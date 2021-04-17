@@ -23,5 +23,5 @@ To regenerate the listing:
 ```
 emerge eix
 eix-update
-EIX_LIMIT=0 eix | grep "^*" | cut -f2 -d' '
+EIX_LIMIT=0 eix | grep "^*" | cut -f2 -d' ' | grep -v "^acct-"
 ```
