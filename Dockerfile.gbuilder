@@ -1,0 +1,2 @@
+FROM gentoo/stage3:amd64
+run emerge --sync && emerge eix && eix-update
