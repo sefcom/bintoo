@@ -4,7 +4,7 @@ PKG="$1"
 FLAGS="$2 -pipe"
 DST="$3"
 
-mkdir -p "$DST/$PKG"
+mkdir -p "$DST/$(dirname $PKG)"
 
 # set up build options
 sed -i -e "s/^COMMON_FLAGS.*/COMMON_FLAGS=\"$FLAGS\"/" /etc/portage/make.conf
