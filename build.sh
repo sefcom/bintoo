@@ -3,6 +3,7 @@
 DST=$1
 FLAGS="$2 -pipe"
 PKG="$3"
+OUTPUT_PACKAGES="$4"
 
 (
 	echo "BINTOO:DESTINATION: $DST"
@@ -48,6 +49,7 @@ PKG="$3"
 		mkdir -p $(dirname $dst_tarball)
 		[ -f $dst_tarball ] && echo "$dst_tarball: already exists" || cp -v $tarball $dst_tarball
 	done
+    cp -v /var/cache/binpkgs/Packages $DST/$OUTPUT_PACKAGES
 	[ $EMERGE_CODE -eq 0 ] && echo BINTOO:SUCCESS || echo BINTOO:FAILED
 	sleep 2
 	exit $EMERGE_CODE
