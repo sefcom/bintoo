@@ -82,6 +82,9 @@ def main():
 
     src, dst = sys.argv[1:3]
     print("[.] Loading source package index...")
+    if not os.path.isfile(src):
+        print(f"[-] Input file {src} is not found. Exiting.")
+        return
     with open(src, "r") as f:
         src_header, src_packages = parse_package_index(f.read())
 
