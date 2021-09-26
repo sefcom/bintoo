@@ -53,8 +53,13 @@ def merge_packages(packages_0: List[Dict[str,str]], packages_1: List[Dict[str,st
     for d in packages_1:
         p1[d['CPV']] = d
 
-    # merge p0 and p1
-    p0.update(p1)
+    # merge p0 and p1, but only update p0 for packages that do not exist in p0
+    p0_keys = set(p0)
+    p1_keys = set(p1)
+    new_pkgs = p1_keys.difference(p0_keys)
+    for new_key in new_pkgs:
+        p0[new_key] = p1[new_key]
+    print(f"[.] Merged {len(new_pkgs)} new packages.")
 
     converted = [ ]
     # convert it back

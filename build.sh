@@ -5,6 +5,7 @@ FLAGS="$2 -pipe"
 PKG="$3"
 OUTPUT_PACKAGES="$4"
 
+mkdir -p $DST/$(dirname $PKG)
 (
 	echo "BINTOO:DESTINATION: $DST"
 	echo "BINTOO:FLAGS: $FLAGS"
