@@ -45,6 +45,7 @@ PKG="$3"
 	do
 		echo $tarball
 		dst_tarball=$DST/$(basename $(dirname $tarball))/$(basename $tarball)
+		mkdir -p $(dirname $dst_tarball)
 		[ -f $dst_tarball ] && echo "$dst_tarball: already exists" || cp -v $tarball $dst_tarball
 	done
 	[ $EMERGE_CODE -eq 0 ] && echo BINTOO:SUCCESS || echo BINTOO:FAILED
