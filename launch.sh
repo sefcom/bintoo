@@ -13,8 +13,8 @@ docker run -i --rm \
     -v $PWD/out-$O:/shared \
     -v $PWD/build.sh:/build.sh \
     -v $TEMP_PACKAGES:/shared/O$O/Packages \
-    zardus/bintoo \
-    /build.sh /shared/O$O "-g -O$O -fcf-protection=none -fno-eliminate-unused-debug-types -frecord-gcc-switches" "$PKG" "$TEMP_PACKAGES_FILENAME"
+    bintoo \
+    /build.sh /shared/O$O "-O$O" "$PKG" "$TEMP_PACKAGES_FILENAME"
 echo "Calling merge_package_index.py"
 ./merge_package_index.py $PWD/out-$O/O$O/$TEMP_PACKAGES_FILENAME $PWD/out-$O/O$O/Packages_merged
 echo "Removing temporary files"

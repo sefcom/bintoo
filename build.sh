@@ -1,6 +1,7 @@
 #!/bin/bash
 
 DST=$1
+RAW_FLAGS=$2
 FLAGS="$2 -pipe"
 PKG="$3"
 OUTPUT_PACKAGES="$4"
@@ -8,6 +9,7 @@ OUTPUT_PACKAGES="$4"
 mkdir -p $DST/$(dirname $PKG)
 (
 	echo "BINTOO:DESTINATION: $DST"
+	echo "BINTOO:RAW_FLAGS: $RAW_FLAGS"
 	echo "BINTOO:FLAGS: $FLAGS"
 	echo "BINTOO:PKG: $PKG"
 
@@ -34,6 +36,11 @@ mkdir -p $DST/$(dirname $PKG)
 
 	# sync if needed
 	[ ! -e /var/db/repos/gentoo ] && emerge --sync && emerge --update --deep --with-bdeps=y --newuse @world
+
+  # setup environment variables
+  export LD_PRELOAD=/hook_execve.so
+  export VARNAMES_ENABLE=true
+  export VARNAMES_OPT=$RAW_FLAGS
 
 	# build
 	USE="opengl gui widgets systemd X gitea -elogind" emerge --binpkg-respect-use=n --newuse --autounmask y --autounmask-continue y --autounmask-license y --autounmask-write y --ask n $PKG
