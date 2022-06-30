@@ -13,7 +13,6 @@ static execve_func_t old_execve = NULL;
 
 int execve(const char* filename, char* const argv[], char* const envp[])
 {
-	printf("Calling evecve!\n");
 	bool found = false;
 	char* enable = getenv("VARNAMES_ENABLE");
   char* opt = getenv("VARNAMES_OPT");
