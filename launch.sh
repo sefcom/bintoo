@@ -13,6 +13,7 @@ docker run -i --rm \
     -v $PWD/out-$O:/shared \
     -v $PWD/build.sh:/build.sh \
     -v $TEMP_PACKAGES:/shared/O$O/Packages \
+    --privileged=true \
     bintoo \
     /build.sh /shared/O$O "-O$O" "$PKG" "$TEMP_PACKAGES_FILENAME"
 echo "Calling merge_package_index.py"
