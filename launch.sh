@@ -12,6 +12,7 @@ cp $PWD/out-$O/O$O/Packages_merged $TEMP_PACKAGES
 docker run -i --rm \
     -v $PWD/out-$O:/shared \
     -v $PWD/build.sh:/build.sh \
+    -v $PWD/hooks/hook_execve.so:/hook_execve.so \
     -v $TEMP_PACKAGES:/shared/O$O/Packages \
     --privileged=true \
     bintoo \

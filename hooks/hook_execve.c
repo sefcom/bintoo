@@ -21,6 +21,18 @@ int execve(const char* filename, char* const argv[], char* const envp[])
 	// char prefix[38] = "--prefix=";
 	
 	if (enable != NULL && strcmp(enable, "true") == 0) {
+		/*
+		int i = 0;
+		while (argv[i] != NULL) {
+			fprintf(stderr, "****++ argv[i] = %s\n", argv[i]);
+			++i;
+		}
+		i = 0;
+		while (envp[i] != NULL) {
+			fprintf(stderr, "****-- envp[i] = %s\n", envp[i]);
+			++i;
+		}
+		*/
 		if (strstr(filename, "gcc") != NULL) {
 			found = true;
 			// strcat(prefix, path_to_gcc);
@@ -33,6 +45,8 @@ int execve(const char* filename, char* const argv[], char* const envp[])
 	
 	// gcc or clang
 	if (found) {
+		// fprintf(stderr, "**** filename = %s\n", filename);
+		// fprintf(stderr, "**** opt = %s\n", opt);
 		if (opt == NULL) {
 			fprintf(stderr, "Error: VARNAMES_OPT is NULL\n");
 			return -1;
@@ -74,9 +88,9 @@ int execve(const char* filename, char* const argv[], char* const envp[])
 
 		copy[copy_idx++] = NULL;
 
-		for (int i = 0; i < copy_idx; ++i) {
-			printf("%d: %s\n", i, copy[i]);
-		}
+		// for (int i = 0; i < copy_idx; ++i) {
+		// 	fprintf(stderr, "%d: %s\n", i, copy[i]);
+		// }
 
 		old_execve = dlsym(RTLD_NEXT, "execve");    
 		return old_execve(filename, copy, envp);
