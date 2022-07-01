@@ -3,19 +3,19 @@
 This is a binary compilation tool that abuses the gentoo build system to get binaries in gentoo's packages with different compilation options.
 
 ```
-docker build -t zardus/bintoo .
+docker build . -f Dockerfile_update -t bintoo
 
-# compile all packages with -O0 and put them into the ./out-0 directory
-cat listing.amd64 | parallel --eta -j12 ./launch.sh 0
+# compile all packages with -O0 and put them into the ./out-0-WORKERID directory
+cat listing.amd64 | parallel --eta -j12 ./launch.sh {%} 0 {}
 
-# compile all packages with -O1 and put them into the ./out-1 directory
-cat listing.amd64 | parallel --eta -j12 ./launch.sh 1
+# compile all packages with -O1 and put them into the ./out-1-WORKERID directory
+cat listing.amd64 | parallel --eta -j12 ./launch.sh {%} 1 {}
 
-# compile all packages with -O2 and put them into the ./out-2 directory
-cat listing.amd64 | parallel --eta -j12 ./launch.sh 2
+# compile all packages with -O2 and put them into the ./out-2-WORKERID directory
+cat listing.amd64 | parallel --eta -j12 ./launch.sh {%} 2 {}
 
-# compile all packages with -O3 and put them into the ./out-3 directory
-cat listing.amd64 | parallel --eta -j12 ./launch.sh 3
+# compile all packages with -O3 and put them into the ./out-3-WORKERID directory
+cat listing.amd64 | parallel --eta -j12 ./launch.sh {%} 3 {}
 ```
 
 To regenerate the listing:
