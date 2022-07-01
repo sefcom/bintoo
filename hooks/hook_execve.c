@@ -21,7 +21,7 @@ int execve(const char* filename, char* const argv[], char* const envp[])
 	// char prefix[38] = "--prefix=";
 	
 	if (enable != NULL && strcmp(enable, "true") == 0) {
-		/*
+#ifdef DEBUG
 		int i = 0;
 		while (argv[i] != NULL) {
 			fprintf(stderr, "****++ argv[i] = %s\n", argv[i]);
@@ -32,21 +32,25 @@ int execve(const char* filename, char* const argv[], char* const envp[])
 			fprintf(stderr, "****-- envp[i] = %s\n", envp[i]);
 			++i;
 		}
-		*/
+#endif
 		if (strstr(filename, "gcc") != NULL) {
 			found = true;
-			// strcat(prefix, path_to_gcc);
+		}
+		else if (strstr(filename, "g++") != NULL) {
+			found = true;
 		}
 		else if (strstr(filename, "clang") != NULL) {
+			// includes both clang and clang++
 			found = true;
-			// strcat(prefix, path_to_clang);
 		}
 	}
 	
 	// gcc or clang
 	if (found) {
-		// fprintf(stderr, "**** filename = %s\n", filename);
-		// fprintf(stderr, "**** opt = %s\n", opt);
+#ifdef DEBUG
+		fprintf(stderr, "**** filename = %s\n", filename);
+		fprintf(stderr, "**** opt = %s\n", opt);
+#endif
 		if (opt == NULL) {
 			fprintf(stderr, "Error: VARNAMES_OPT is NULL\n");
 			return -1;
@@ -88,9 +92,11 @@ int execve(const char* filename, char* const argv[], char* const envp[])
 
 		copy[copy_idx++] = NULL;
 
-		// for (int i = 0; i < copy_idx; ++i) {
-		// 	fprintf(stderr, "%d: %s\n", i, copy[i]);
-		// }
+#ifdef DEBUG
+		for (int i = 0; i < copy_idx; ++i) {
+			fprintf(stderr, "%d: %s\n", i, copy[i]);
+		}
+#endif
 
 		old_execve = dlsym(RTLD_NEXT, "execve");    
 		return old_execve(filename, copy, envp);
