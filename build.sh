@@ -2,7 +2,7 @@
 
 DST=$1
 RAW_FLAGS=$2
-FLAGS="$2 -fcf-protection=none -fno-eliminate-unused-debug-types -frecord-gcc-switches -pipe"
+FLAGS="$2 -fcf-protection=none -fno-eliminate-unused-debug-types -frecord-gcc-switches -pipe -fno-lto"
 PKG="$3"
 OUTPUT_PACKAGES="$4"
 
@@ -33,6 +33,9 @@ mkdir -p $DST/$(dirname $PKG)
 	echo 'PORTAGE_BINHOST="file://'$DST'"' >> /etc/portage/make.conf
 	echo 'FETCHCOMMAND="curl -o \"\${DISTDIR}/\${FILE}\" \"\${URI}\""' >> /etc/portage/make.conf
 	echo 'RESUMECOMMAND="curl -C - -o \"\${DISTDIR}/\${FILE}\" \"\${URI}\""' >> /etc/portage/make.conf
+
+	# disable lto since it uses too much RAM
+	echo "*/* lto" >> /etc/portage/package.use
 
 	# sync if needed
 	[ ! -e /var/db/repos/gentoo ] && emerge --sync && emerge --update --deep --with-bdeps=y --newuse @world
