@@ -1,13 +1,15 @@
 #!/bin/bash
 
 DST=$1
-FLAGS="$2 -pipe"
+RAW_FLAGS=$2
+FLAGS="$2 -fcf-protection=none -fno-eliminate-unused-debug-types -frecord-gcc-switches -pipe"
 PKG="$3"
 OUTPUT_PACKAGES="$4"
 
 mkdir -p $DST/$(dirname $PKG)
 (
 	echo "BINTOO:DESTINATION: $DST"
+	echo "BINTOO:RAW_FLAGS: $RAW_FLAGS"
 	echo "BINTOO:FLAGS: $FLAGS"
 	echo "BINTOO:PKG: $PKG"
 
@@ -27,13 +29,21 @@ mkdir -p $DST/$(dirname $PKG)
 
 	# set up build options
 	sed -i -e "s/^COMMON_FLAGS.*/COMMON_FLAGS=\"$FLAGS\"/" /etc/portage/make.conf
-	echo 'FEATURES="nostrip getbinpkg buildpkg -ipc-sandbox -network-sandbox -pid-sandbox"' >> /etc/portage/make.conf
+	echo 'FEATURES="nostrip getbinpkg buildpkg -ipc-sandbox -network-sandbox -pid-sandbox -sandbox -usersandbox -userpriv"' >> /etc/portage/make.conf
 	echo 'PORTAGE_BINHOST="file://'$DST'"' >> /etc/portage/make.conf
 	echo 'FETCHCOMMAND="curl -o \"\${DISTDIR}/\${FILE}\" \"\${URI}\""' >> /etc/portage/make.conf
 	echo 'RESUMECOMMAND="curl -C - -o \"\${DISTDIR}/\${FILE}\" \"\${URI}\""' >> /etc/portage/make.conf
 
 	# sync if needed
 	[ ! -e /var/db/repos/gentoo ] && emerge --sync && emerge --update --deep --with-bdeps=y --newuse @world
+
+  # setup environment variables
+  export LD_PRELOAD=/hook_execve.so
+  export VARNAMES_ENABLE=true
+  export VARNAMES_OPT=$RAW_FLAGS
+  	echo 'export LD_PRELOAD=/hook_execve.so' >> /etc/portage/bashrc
+  	echo 'export VARNAMES_ENABLE=true' >> /etc/portage/bashrc
+  	echo "export VARNAMES_OPT=$RAW_FLAGS" >> /etc/portage/bashrc
 
 	# build
 	USE="opengl gui widgets systemd X gitea -elogind" emerge --binpkg-respect-use=n --newuse --autounmask y --autounmask-continue y --autounmask-license y --autounmask-write y --ask n $PKG

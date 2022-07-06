@@ -1,5 +1,0 @@
-FROM zardus/bintoo
-
-RUN emerge --sync
-COPY listing.amd64 /
-RUN rm /build.sh

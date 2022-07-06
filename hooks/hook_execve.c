@@ -4,32 +4,57 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 // -g -O$O -fcf-protection=none -fno-eliminate-unused-debug-types -frecord-gcc-switches
 
 typedef ssize_t (*execve_func_t)(const char* filename, char* const argv[], char* const envp[]);
 static execve_func_t old_execve = NULL;
-int execve(const char* filename, char* const argv[], char* const envp[]) {
 
+int execve(const char* filename, char* const argv[], char* const envp[])
+{
 	bool found = false;
-        char* env_var = getenv("VARNAMES_OPT");
-	char* path_to_gcc = getenv("VARNAMES_gcc"); // execve can find cc1
-	char *path_to_clang = getenv("VARNAMES_clang"); 
-
-	char prefix[38] = "--prefix=";
+	char* enable = getenv("VARNAMES_ENABLE");
+  char* opt = getenv("VARNAMES_OPT");
+	// char* path_to_gcc = getenv("VARNAMES_gcc");
+	// char *path_to_clang = getenv("VARNAMES_clang"); 
+	// char prefix[38] = "--prefix=";
 	
-	if (strncmp(filename, "/usr/bin/gcc", 12) == 0 ){
-		found = true;
-		strcat(prefix, path_to_gcc);
+	if (enable != NULL && strcmp(enable, "true") == 0) {
+#ifdef DEBUG
+		int i = 0;
+		while (argv[i] != NULL) {
+			fprintf(stderr, "****++ argv[i] = %s\n", argv[i]);
+			++i;
+		}
+		i = 0;
+		while (envp[i] != NULL) {
+			fprintf(stderr, "****-- envp[i] = %s\n", envp[i]);
+			++i;
+		}
+#endif
+		if (strstr(filename, "gcc") != NULL) {
+			found = true;
+		}
+		else if (strstr(filename, "g++") != NULL) {
+			found = true;
+		}
+		else if (strstr(filename, "clang") != NULL) {
+			// includes both clang and clang++
+			found = true;
+		}
 	}
-	if (strncmp(filename, "/usr/bin/clang", 14) == 0){
-		found = true;
-		strcat(prefix, path_to_clang);
-	}
-		
 	
 	// gcc or clang
-	if (found){
+	if (found) {
+#ifdef DEBUG
+		fprintf(stderr, "**** filename = %s\n", filename);
+		fprintf(stderr, "**** opt = %s\n", opt);
+#endif
+		if (opt == NULL) {
+			fprintf(stderr, "Error: VARNAMES_OPT is NULL\n");
+			return -1;
+		}
 		
 		// count number of arguments
 		int argc = 0;
@@ -40,33 +65,48 @@ int execve(const char* filename, char* const argv[], char* const envp[]) {
 		char **copy;
 
 		// argc + 1 + 4 (additional flags) + 1 (set path of gcc/clang with --prefix)
-		copy = (char **) malloc ((argc + 5) * sizeof (char *));
-		for ( argc = 0; argv[argc] != NULL; argc++){
-			int len = strlen (argv[argc]);
-			copy[argc] = (char *) malloc (len + 1);
+		copy = (char **) malloc((argc + 6) * sizeof(char *));
+		memset(copy, 0, sizeof(char*) * (argc + 6));
+		int copy_idx = 0;
 
-			if (0 == strncmp(argv[argc], "-O", 2))
-				strcpy(copy[argc], env_var);
-			else                       
-				strcpy (copy[argc], argv[argc]);
+		// copy argv[0]
+		copy[copy_idx++] = argv[0];
+		// add flags to copy of argv	
+		copy[copy_idx++] = opt;
+		copy[copy_idx++] = "-g";
+		copy[copy_idx++] = "-fcf-protection=none";
+		copy[copy_idx++] = "-fno-eliminate-unused-debug-types";
+		copy[copy_idx++] = "-frecord-gcc-switches";
+
+		for (int i = 1; argv[i] != NULL; i++) {
+			if (strncmp(argv[i], "-O", 2) == 0) {
+				// skip
+				;
+			}
+			else {
+				int len = strlen(argv[i]);
+				copy[copy_idx] = (char *)malloc(len + 1);
+				strcpy(copy[copy_idx++], argv[i]);
+			}
 		}
 
-		// add flags to copy of argv	
-		copy[argc] = "-g";
-		copy[argc + 1] = "-fcf-protection=none";
-		copy[argc + 2] = "-fno-eliminate-unused-debug-types";
-		copy[argc + 3] = "-frecord-gcc-switches";
-		copy[argc + 4] = prefix;
-		copy[argc + 5] = NULL;
+		copy[copy_idx++] = NULL;
 
+#ifdef DEBUG
+		for (int i = 0; i < copy_idx; ++i) {
+			fprintf(stderr, "%d: %s\n", i, copy[i]);
+		}
+#endif
 
 		old_execve = dlsym(RTLD_NEXT, "execve");    
 		return old_execve(filename, copy, envp);
 	}
 
 	// not gcc or clang
-	else{
+	else {
 		old_execve = dlsym(RTLD_NEXT, "execve");
 		return old_execve(filename, argv, envp);
 	}
+
+	return 0;
 }	
