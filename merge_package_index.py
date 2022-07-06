@@ -59,6 +59,12 @@ def merge_packages(packages_0: List[Dict[str,str]], packages_1: List[Dict[str,st
     new_pkgs = p1_keys.difference(p0_keys)
     for new_key in new_pkgs:
         p0[new_key] = p1[new_key]
+
+    # remove all virtual/ packages
+    for key in list(p0.keys()):
+        if "virtual/" in key:
+            del p0[key]
+
     print(f"[.] Merged {len(new_pkgs)} new packages.")
 
     converted = [ ]

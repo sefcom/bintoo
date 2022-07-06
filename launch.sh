@@ -6,6 +6,11 @@ PKG="$3"
 TEMP_PACKAGES=$(tempfile)
 
 mkdir -p $PWD/out-$O-$WORKER/O$O
+PKG_PATH=$(ls $PWD/out-$O-$WORKER/O$O/*/*.tbz2 | grep $PKG || echo '')
+if [ ! -z "${PKG_PATH}" ]; then
+	echo "$PKG exists (@$PKG_PATH). Skip."
+	exit 0
+fi
 rm -f $PWD/out-$O-$WORKER/O$O/Packages
 touch $PWD/out-$O-$WORKER/O$O/Packages_merged
 TEMP_PACKAGES_FILENAME=$(basename $TEMP_PACKAGES)

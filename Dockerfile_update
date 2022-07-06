@@ -1,6 +1,0 @@
-FROM zardus/bintoo
-
-RUN emerge --sync
-COPY listing.amd64 /
-COPY hooks/hook_execve.so /
-RUN rm /build.sh
