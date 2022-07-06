@@ -3,7 +3,7 @@
 This is a binary compilation tool that abuses the gentoo build system to get binaries in gentoo's packages with different compilation options.
 
 ```
-docker build . -f Dockerfile_update -t bintoo
+docker build --no-cache . -f Dockerfile -t bintoo
 
 # compile all packages with -O0 and put them into the ./out-0-WORKERID directory
 cat listing.amd64 | parallel --eta -j12 ./launch.sh {%} 0 {}
