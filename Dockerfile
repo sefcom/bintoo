@@ -5,7 +5,11 @@ run emerge --sync
 run emerge --oneshot sys-apps/portage
 run emerge -v1 dev-perl/Locale-gettext sys-apps/help2man
 run emerge --update --deep --with-bdeps=y --newuse @world --exclude python:3.10
-copy listing.amd64 /
-run cat listing.amd64 | grep "^acct" | USE=gitea xargs emerge
+
+# install all acct- packages
+run emerge eix
+run eix-update
+run EIX_LIMIT=0 eix | grep "^*" | cut -f2 -d' ' | grep "^acct-" | USE=gitea xargs emerge
+
 COPY hooks/hook_execve.so /
 #copy build.sh /

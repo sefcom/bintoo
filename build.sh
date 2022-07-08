@@ -36,6 +36,11 @@ mkdir -p $DST/$(dirname $PKG)
 	# limit the number of parallel jobs to avoid RAM exhaustion
 	echo 'MAKEOPTS="--jobs 8 --load-average 9"' >> /etc/portage/make.conf
 
+	# run emaint binhost --fix to ensure Packages file is complete
+	echo "PKGDIR=$DST" >> /etc/portage/make.conf
+	emaint binhost --fix
+	sed -i '$ d' /etc/portage/make.conf
+
 	# disable lto since it uses too much RAM
 	echo "*/* lto" >> /etc/portage/package.use
 
@@ -67,9 +72,9 @@ mkdir -p $DST/$(dirname $PKG)
 		echo $tarball
 		dst_tarball=$DST/$(basename $(dirname $tarball))/$(basename $tarball)
 		mkdir -p $(dirname $dst_tarball)
-		cp -v $tarball $dst_tarball
+		cp -uv $tarball $dst_tarball
 	done
-    cp -v /var/cache/binpkgs/Packages $DST/$OUTPUT_PACKAGES
+	cp -v /var/cache/binpkgs/Packages $DST/$OUTPUT_PACKAGES
 	[ $EMERGE_CODE -eq 0 ] && echo BINTOO:SUCCESS || echo BINTOO:FAILED
 	sleep 2
 	exit $EMERGE_CODE
