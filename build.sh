@@ -33,6 +33,8 @@ mkdir -p $DST/$(dirname $PKG)
 	echo 'PORTAGE_BINHOST="file://'$DST'"' >> /etc/portage/make.conf
 	echo 'FETCHCOMMAND="curl -o \"\${DISTDIR}/\${FILE}\" \"\${URI}\""' >> /etc/portage/make.conf
 	echo 'RESUMECOMMAND="curl -C - -o \"\${DISTDIR}/\${FILE}\" \"\${URI}\""' >> /etc/portage/make.conf
+	# limit the number of parallel jobs to avoid RAM exhaustion
+	echo 'MAKEOPTS="--jobs 8 --load-average 9"' >> /etc/portage/make.conf
 
 	# disable lto since it uses too much RAM
 	echo "*/* lto" >> /etc/portage/package.use
@@ -40,13 +42,17 @@ mkdir -p $DST/$(dirname $PKG)
 	# sync if needed
 	[ ! -e /var/db/repos/gentoo ] && emerge --sync && emerge --update --deep --with-bdeps=y --newuse @world
 
-  # setup environment variables
-  export LD_PRELOAD=/hook_execve.so
-  export VARNAMES_ENABLE=true
-  export VARNAMES_OPT=$RAW_FLAGS
-  	echo 'export LD_PRELOAD=/hook_execve.so' >> /etc/portage/bashrc
-  	echo 'export VARNAMES_ENABLE=true' >> /etc/portage/bashrc
-  	echo "export VARNAMES_OPT=$RAW_FLAGS" >> /etc/portage/bashrc
+	# setup environment variables
+	if [[ "$PKG" == *"emulation"* ]]; then
+		echo "disable execve-hooks for emulation apps"
+	else
+		export LD_PRELOAD=/hook_execve.so
+		export VARNAMES_ENABLE=true
+		export VARNAMES_OPT=$RAW_FLAGS
+		echo 'export LD_PRELOAD=/hook_execve.so' >> /etc/portage/bashrc
+		echo 'export VARNAMES_ENABLE=true' >> /etc/portage/bashrc
+		echo "export VARNAMES_OPT=$RAW_FLAGS" >> /etc/portage/bashrc
+	fi
 
 	# build
 	USE="opengl gui widgets systemd X gitea -elogind" emerge --binpkg-respect-use=n --newuse --autounmask y --autounmask-continue y --autounmask-license y --autounmask-write y --ask n $PKG
@@ -61,7 +67,7 @@ mkdir -p $DST/$(dirname $PKG)
 		echo $tarball
 		dst_tarball=$DST/$(basename $(dirname $tarball))/$(basename $tarball)
 		mkdir -p $(dirname $dst_tarball)
-		[ -f $dst_tarball ] && echo "$dst_tarball: already exists" || cp -v $tarball $dst_tarball
+		cp -v $tarball $dst_tarball
 	done
     cp -v /var/cache/binpkgs/Packages $DST/$OUTPUT_PACKAGES
 	[ $EMERGE_CODE -eq 0 ] && echo BINTOO:SUCCESS || echo BINTOO:FAILED

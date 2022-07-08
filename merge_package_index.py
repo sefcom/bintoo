@@ -109,7 +109,7 @@ def main():
 
     # merge them
     print("[.] Merging...")
-    merged_packages = merge_packages(dst_packages, src_packages)
+    merged_packages = merge_packages(src_packages, dst_packages)
 
     if not dst_header:
         dst_header = src_header
