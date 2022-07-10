@@ -36,13 +36,21 @@ mkdir -p $DST/$(dirname $PKG)
 	# limit the number of parallel jobs to avoid RAM exhaustion
 	echo 'MAKEOPTS="--jobs 8 --load-average 9"' >> /etc/portage/make.conf
 
+	# force unused targets
+	# bug: https://bugs.gentoo.org/767700
+	# ref: https://www.reddit.com/r/Gentoo/comments/teody6/why_are_nearly_all_llvm_targets_forced_since_the/
+	mkdir -p /etc/portage/profile/
+	echo "sys-devel/llvm LLVM_TARGETS: X86 BPF -AArch64 -AMDGPU -ARM -AVR -Hexagon -Lanai -MSP430 -Mips -NVPTX -PowerPC -RISCV -Sparc -SystemZ -WebAssembly -XCore" >> /etc/portage/profile/package.use.force
+	echo "sys-devel/clang LLVM_TARGETS: X86 BPF -AArch64 -AMDGPU -ARM -AVR -Hexagon -Lanai -MSP430 -Mips -NVPTX -PowerPC -RISCV -Sparc -SystemZ -WebAssembly -XCore" >> /etc/portage/profile/package.use.force
+
 	# run emaint binhost --fix to ensure Packages file is complete
 	echo "PKGDIR=$DST" >> /etc/portage/make.conf
 	emaint binhost --fix
 	sed -i '$ d' /etc/portage/make.conf
 
 	# disable lto since it uses too much RAM
-	echo "*/* lto" >> /etc/portage/package.use
+	mkdir -p /etc/portage/package.use
+	echo "*/* lto" >> /etc/portage/package.use/no_lto
 
 	# sync if needed
 	[ ! -e /var/db/repos/gentoo ] && emerge --sync && emerge --update --deep --with-bdeps=y --newuse @world
