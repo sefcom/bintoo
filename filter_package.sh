@@ -1,4 +1,4 @@
-#!/bin/bash -eux
+#!/bin/bash -u
 
 # ./filter_package.sh WORKER_ID PACKAGE_NAME
 
