@@ -66,6 +66,14 @@ def main():
                     subprocess.call(["tar", "-xf", package_path],
                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                                     cwd=d)
+                elif package_path.endswith(".tar"):
+                    subprocess.call(["tar", "-xf", package_path],
+                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                    cwd=d)
+                elif package_path.endswith(".tar.Z"):
+                    subprocess.call(["tar", "-xzf", package_path],
+                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                    cwd=d)
                 elif package_path.endswith(".zip"):
                     subprocess.call(["unzip", package_path],
                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
