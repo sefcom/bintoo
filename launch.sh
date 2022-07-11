@@ -12,6 +12,13 @@ if [ ! -z "${PKG_PATH}" ]; then
 	exit 0
 fi
 
+# skip non C/C++ packages
+IN_C_LISTING=$(grep "$PKG" listing.amd64.c || echo '')
+if [ -z "$IN_C_LISTING" ]; then
+	echo "$PKG is not a C/C++ package. Skip."
+	exit 0
+fi
+
 # only build the ones that are totally missing
 BUILDLOG_PATH=$PWD/out-$O-$WORKER/O$O/$PKG.buildlog
 if [ -f $BUILDLOG_PATH ]; then
