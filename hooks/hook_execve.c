@@ -7,6 +7,8 @@
 #include <stdio.h>
 
 // -g -O$O -fcf-protection=none -fno-eliminate-unused-debug-types -frecord-gcc-switches
+//   -fno-lto -fno-inline-functions -fno-inline-small-functions
+//   -fno-inline-functions-called-once -fno-inline
 
 typedef ssize_t (*execve_func_t)(const char* filename, char* const argv[], char* const envp[]);
 static execve_func_t old_execve = NULL;
@@ -77,6 +79,11 @@ int execve(const char* filename, char* const argv[], char* const envp[])
 		copy[copy_idx++] = "-fcf-protection=none";
 		copy[copy_idx++] = "-fno-eliminate-unused-debug-types";
 		copy[copy_idx++] = "-frecord-gcc-switches";
+        copy[copy_idx++] = "-fno-lto";
+        copy[copy_idx++] = "-fno-inline-functions";
+        copy[copy_idx++] = "-fno-inline-small-functions";
+        copy[copy_idx++] = "-fno-inline-functions-called-once";
+        copy[copy_idx++] = "-fno-inline";
 
 		for (int i = 1; argv[i] != NULL; i++) {
 			if (strncmp(argv[i], "-O", 2) == 0) {

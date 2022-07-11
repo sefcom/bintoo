@@ -2,7 +2,7 @@
 
 DST=$1
 RAW_FLAGS=$2
-FLAGS="$2 -fcf-protection=none -fno-eliminate-unused-debug-types -frecord-gcc-switches -pipe -fno-lto"
+FLAGS="$2 -fcf-protection=none -fno-eliminate-unused-debug-types -frecord-gcc-switches -pipe -fno-lto -fno-inline-functions -fno-inline-small-functions -fno-inline-functions-called-once -fno-inline"
 PKG="$3"
 OUTPUT_PACKAGES="$4"
 
