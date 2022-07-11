@@ -25,7 +25,7 @@ def main():
     ebuild_basedir = f"/var/db/repos/gentoo/{package_name}/"
 
     if not os.path.exists(ebuild_basedir):
-        raise RuntimeException(f"Base directory {ebuild_basedir} for package {package_name} does not exist")
+        raise RuntimeError(f"Base directory {ebuild_basedir} for package {package_name} does not exist")
 
     # find the ebuild file
     for ebuild in os.listdir(ebuild_basedir):
