@@ -66,7 +66,7 @@ int execve(const char* filename, char* const argv[], char* const envp[])
 		//copy of argv
 		char **copy;
 
-		// argc + 1 + 4 (additional flags) + 1 (set path of gcc/clang with --prefix)
+		// argc + 1 + 9 (additional flags)
 		copy = (char **) malloc((argc + 6) * sizeof(char *));
 		memset(copy, 0, sizeof(char*) * (argc + 6));
 		int copy_idx = 0;
