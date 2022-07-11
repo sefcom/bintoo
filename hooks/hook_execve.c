@@ -47,6 +47,11 @@ int execve(const char* filename, char* const argv[], char* const envp[])
                 && !strcmp(filename + strlen(filename) - 5, "clang")) {
 			found = true;
 		}
+        else if (strlen(filename) >= 8
+                && (!strcmp(filename + strlen(filename) - 8, "clang-14") || 
+                    !strcmp(filename + strlen(filename) - 8, "clang-13"))) {
+			found = true;
+		}
 		else if (strlen(filename) >= 7
                 && !strcmp(filename + strlen(filename) - 7, "clang++")) {
 			found = true;
