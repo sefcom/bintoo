@@ -35,14 +35,20 @@ int execve(const char* filename, char* const argv[], char* const envp[])
 			++i;
 		}
 #endif
-		if (strstr(filename, "gcc") != NULL) {
+		if (strlen(filename) >= 3
+                && strcmp(filename + strlen(filename) - 3, "gcc") != NULL) {
 			found = true;
 		}
-		else if (strstr(filename, "g++") != NULL) {
+		else if (strlen(filename) >= 3
+                && strcmp(filename + strlen(filename) - 3, "g++") != NULL) {
 			found = true;
 		}
-		else if (strstr(filename, "clang") != NULL) {
-			// includes both clang and clang++
+		else if (strlen(filename) >= 5
+                && strcmp(filename + strlen(filename) - 5, "clang") != NULL) {
+			found = true;
+		}
+		else if (strlen(filename) >= 7
+                && strcmp(filename + strlen(filename) - 7, "clang++") != NULL) {
 			found = true;
 		}
 	}
