@@ -36,19 +36,19 @@ int execve(const char* filename, char* const argv[], char* const envp[])
 		}
 #endif
 		if (strlen(filename) >= 3
-                && strcmp(filename + strlen(filename) - 3, "gcc") != NULL) {
+                && !strcmp(filename + strlen(filename) - 3, "gcc")) {
 			found = true;
 		}
 		else if (strlen(filename) >= 3
-                && strcmp(filename + strlen(filename) - 3, "g++") != NULL) {
+                && !strcmp(filename + strlen(filename) - 3, "g++")) {
 			found = true;
 		}
 		else if (strlen(filename) >= 5
-                && strcmp(filename + strlen(filename) - 5, "clang") != NULL) {
+                && !strcmp(filename + strlen(filename) - 5, "clang")) {
 			found = true;
 		}
 		else if (strlen(filename) >= 7
-                && strcmp(filename + strlen(filename) - 7, "clang++") != NULL) {
+                && !strcmp(filename + strlen(filename) - 7, "clang++")) {
 			found = true;
 		}
 	}
