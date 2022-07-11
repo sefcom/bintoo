@@ -77,9 +77,9 @@ int execve(const char* filename, char* const argv[], char* const envp[])
 		//copy of argv
 		char **copy;
 
-		// argc + 1 + 9 (additional flags)
-		copy = (char **) malloc((argc + 10) * sizeof(char *));
-		memset(copy, 0, sizeof(char*) * (argc + 10));
+		// argc + 1 + 10 (additional flags)
+		copy = (char **) malloc((argc + 11) * sizeof(char *));
+		memset(copy, 0, sizeof(char*) * (argc + 11));
 		int copy_idx = 0;
 
 		// copy argv[0]
