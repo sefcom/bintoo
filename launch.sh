@@ -6,12 +6,19 @@ PKG="$3"
 TEMP_PACKAGES=$(tempfile)
 
 mkdir -p $PWD/out-$O-$WORKER/O$O
-PKG_PATH=$(ls $PWD/out-$O-$WORKER/O$O/*/*.tbz2 | grep $PKG || echo '')
+PKG_PATH=$(find . -path "*$PKG*.tbz2" || echo '')
 if [ ! -z "${PKG_PATH}" ]; then
 	echo "$PKG exists (@$PKG_PATH). Skip."
 	exit 0
 fi
-rm -f $PWD/out-$O-$WORKER/O$O/Packages
+
+# only build the ones that are totally missing
+BUILDLOG_PATH=$PWD/out-$O-$WORKER/O$O/$PKG.buildlog
+if [ -f $BUILDLOG_PATH ]; then
+	exit 0
+fi
+
+rm -rf $PWD/out-$O-$WORKER/O$O/Packages
 touch $PWD/out-$O-$WORKER/O$O/Packages_merged
 TEMP_PACKAGES_FILENAME=$(basename $TEMP_PACKAGES)
 cp $PWD/out-$O-$WORKER/O$O/Packages_merged $PWD/out-$O-$WORKER/O$O/Packages
