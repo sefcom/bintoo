@@ -36,6 +36,9 @@ mkdir -p $DST/$(dirname $PKG)
 	# limit the number of parallel jobs to avoid RAM exhaustion
 	echo 'MAKEOPTS="--jobs 8 --load-average 9"' >> /etc/portage/make.conf
 
+	# remove binary package verification
+	sed -i -e "s/self._verify =.*/self._verify = False/" /usr/lib/python3.10/site-packages/_emerge/Binpkg.py
+
 	# force unused targets
 	# bug: https://bugs.gentoo.org/767700
 	# ref: https://www.reddit.com/r/Gentoo/comments/teody6/why_are_nearly_all_llvm_targets_forced_since_the/
