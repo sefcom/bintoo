@@ -31,8 +31,8 @@ mkdir -p $DST/$(dirname $PKG)
 	sed -i -e "s/^COMMON_FLAGS.*/COMMON_FLAGS=\"$FLAGS\"/" /etc/portage/make.conf
 	echo 'FEATURES="nostrip getbinpkg buildpkg -ipc-sandbox -network-sandbox -pid-sandbox -sandbox -usersandbox -userpriv"' >> /etc/portage/make.conf
 	echo 'PORTAGE_BINHOST="file://'$DST'"' >> /etc/portage/make.conf
-	echo 'FETCHCOMMAND="curl -o \"\${DISTDIR}/\${FILE}\" \"\${URI}\""' >> /etc/portage/make.conf
-	echo 'RESUMECOMMAND="curl -C - -o \"\${DISTDIR}/\${FILE}\" \"\${URI}\""' >> /etc/portage/make.conf
+	echo 'FETCHCOMMAND="curl -L -o \"\${DISTDIR}/\${FILE}\" \"\${URI}\""' >> /etc/portage/make.conf
+	echo 'RESUMECOMMAND="curl -L -C - -o \"\${DISTDIR}/\${FILE}\" \"\${URI}\""' >> /etc/portage/make.conf
 	# limit the number of parallel jobs to avoid RAM exhaustion
 	echo 'MAKEOPTS="--jobs 8 --load-average 9"' >> /etc/portage/make.conf
 
