@@ -47,9 +47,9 @@ mkdir -p $DST/$(dirname $PKG)
 	echo "sys-devel/clang LLVM_TARGETS: X86 BPF -AArch64 -AMDGPU -ARM -AVR -Hexagon -Lanai -MSP430 -Mips -NVPTX -PowerPC -RISCV -Sparc -SystemZ -WebAssembly -XCore" >> /etc/portage/profile/package.use.force
 
 	# run emaint binhost --fix to ensure Packages file is complete
-	echo "PKGDIR=$DST" >> /etc/portage/make.conf
-	emaint binhost --fix
-	sed -i '$ d' /etc/portage/make.conf
+	# echo "PKGDIR=$DST" >> /etc/portage/make.conf
+	# emaint binhost --fix
+	# sed -i '$ d' /etc/portage/make.conf
 
 	# disable lto since it uses too much RAM
 	mkdir -p /etc/portage/package.use
